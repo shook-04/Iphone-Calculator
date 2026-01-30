@@ -26,28 +26,49 @@ const numberElArray = [
 ];
 
 //Function
-const getValueAsStr = () => {
-    const currentDisplayStr = valueEl.textContent;
-    return currentDisplayStr.split(',').join('');
-}
+const getValueAsStr = () => valueEl.textContent.split(',').join('');
 
-const handleNumberClick = (numStr) => {
-  const currentDisplayStr = getValueAsStr();
-  if (currentDisplayStr === '0') {
-    valueEl.textContent = numStr;
+const getValueAsNum = () => {
+  return parseFloat(getValueAsStr());
+};
+
+const setStrAsValue = (valueStr) => {
+  if (valueStr[valueStr.length - 1] === '.') {
+    valueEl.textContent += '.';
+    return;
+  }
+
+  const [wholeNumStr, decimalStr] = valueStr.split('.');
+  if (decimalStr) {
+    valueEl.textContent =
+      parseFloat(wholeNumStr).toLocaleString() + '.' + decimalStr;
   } else {
-    valueEl.textContent = 
-      parseFloat(currentDisplayStr + numStr).toLocaleString();
+    valueEl.textContent = parseFloat(wholeNumStr).toLocaleString();
   }
 };
 
-//Add Event Listeners to numbers and buttons
+const handleNumberClick = (numStr) => {
+  const currentValueStr = getValueAsStr();
+  if (currentValueStr === '0') {
+    setStrAsValue(numStr);
+  } else {
+    setStrAsValue(currentValueStr + numStr);
+  }
+};
+
+//Add Event Listeners to numbers and decimal
 for (let i=0; i < numberElArray.length; i++) {
   const numberEl = numberElArray[i];
   numberEl.addEventListener('click', () => {
     handleNumberClick(i.toString());
   });
 }
+decimalEl.addEventListener('click', () => {
+  const currentValueStr = getValueAsStr();
+  if (!currentValueStr.includes('.')) {
+    setStrAsValue(currentValueStr + '.');
+  }
+});
 
 
 
